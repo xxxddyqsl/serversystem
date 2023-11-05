@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function Tabclick(data){
+                    console.log(data)
+                };
+    </script>
+</head>
+
+<body>
+
+    <h1> home- 服务端渲染页面 通过ejs 库 - 渲染ejs模板页 + ejs模板点击事件 </h1>
+    <% if(Code==0){%>
+        <table border="1">
+            <thead>
+                <tr>
+                    <td>id</td>
+                    <td>用户名</td>
+                    <td>班级</td>
+                    <td>性别</td>
+                    <td>分数</td>
+                    <td>时间</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody>
+                <% var msg=Data; for(let i in msg){ %>
+                    <% let item = msg[i]; console.log(msg)%>
+                    <tr id='<%=item.id%>'onclick='Tabclick(<%=JSON.stringify(item) %>)' >
+                        <td>
+                            <%=item.id%>
+                        </td>
+                        <td>
+                            <%=item.name%>
+                        </td>
+                        <td>
+                            <%=item.class_id+'班'%>
+                        </td>
+                        <td>
+                            <%=item.gender%>
+                        </td>
+                        <td>
+                            <%=item.score%>
+                        </td>
+                       
+                        <td>
+                            <%=item.create_time%>
+                        </td>
+                       
+                        <td>
+                            <button class=''onclick="(<%=JSON.stringify(item) %>)=>{
+                                console.log(item)
+                            }">
+                                修改
+                            </button>
+                            <button>
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                    <%}%>
+            </tbody>
+        </table>
+
+        <% } %>
+</body>
+
+</html>

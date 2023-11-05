@@ -1,0 +1,120 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+// koa 仿 express 生成器 封装
+/*
+ www 文件入口 主要作用是：
+  1：创建 http 服务器（server）
+  2：监听3000 端口号 ，
+  只是对于端口号 做了发生错误时的回调（onError 函数） ，
+  把这些错误的回调 进行语义化处理（就是之前的报错可能是一堆的英文错误 ，现在是根据不同的错误码显示一个比较友好的提示）。
+
+  核心代码在 app.js 中
+*/
+var app = require('../app');
+// var debug = require('debug')('myapp:server');
+var http = require('http'); // http 模块
+
+/*
+  引入数据库模块 - 项目启动后 -因为引入之后会自动执行 里面的写的 连接数据库 就会自动的进行连接mysql数据库，
+  
+*/
+require('../config/db.config')
+/**
+ * Get port from environment and store in Express.
+ */
+// process.env.PORT 如果环境变量中有端口号 就取环境变量中的端口号 没有 就取3000
+// process.env.PORT = 4399 测试手动修改 端口号 默认为3000端口号 当前改为 4399
+var port = normalizePort(process.env.PORT || '4399' || '3000');
+
+// app.set('port', port);
+
+/**
+ * Create HTTP server. 创建 http 服务器
+ */
+/*
+  koa
+  app.listen是http.createServer的语法糖。
+
+  app.listen(3000);
+  等于
+  http.createServer(app.callback()).listen(3000);
+
+  其中app.callback用于处理成http.createServer适用的回调方法。
+*/
+var server = http.createServer(app.callback());// 创建http服务器
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);// 监听端口号
+/*
+  监听出错 时 走onError 回调函数 返回相应的错误信息
+  如：端口号3000被占用时 返回的 Port 3000 is already in use
+*/
+server.on('error', onError);
+server.on('listening', onListening); //
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  // debug('Listening on ' + bind);
+}
