@@ -8,10 +8,9 @@ const promisePool = require('../config/db.config');
 const loginModel = {
     login: async (username, password) => {
         // 联表查询    inner join 方式 只能 查询出来 两个表 有关联性的的 数据 如 students 表内的name 和 users 表内的 name相同
-        // const data = await promisePool.query(`select * from students s inner join users u on s.name=u.name  where ( s.name=? ) and ( u.password=? ) ;`, [ username , password]);
+        const data = await promisePool.query(`select u.*,r.roleName from users u left join roles r on (u.roleid = r.roleType)   where ( u.username=? ) and ( u.password=? ) ;`, [ username , password]);
         // 语句： select from 表名 别名 inner join（联表查询方式） on（条件）  where 过滤条件
-        // return data;
-        return  [111]
+        return data[0];
     },
 }
 module.exports = loginModel;

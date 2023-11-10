@@ -22,9 +22,18 @@
 const apiModel = require('../../model/apiModel');
 const rights = {
     rights: async (ctx, next) => {
-        // console.log('获取请求参数get=>',ctx.query,ctx.querystring)
+        console.log('获取请求参数get=>',ctx.query,ctx.querystring)
+        let {id}=ctx.query; 
         // M层 model 操作数据库 并且返回数据
-        const data = await apiModel.rights();
+        const data = await apiModel.rights(id);
+        // console.log(data)
+        ctx.body = {Code: 0,Data:data};
+    },
+    rightsTree: async (ctx, next) => {
+        console.log('获取请求参数get=>',ctx.query,ctx.querystring)
+        let {id}=ctx.query; 
+        // M层 model 操作数据库 并且返回数据
+        const data = await apiModel.rightsTree(id);
         // console.log(data)
         ctx.body = {Code: 0,Data:data};
     },

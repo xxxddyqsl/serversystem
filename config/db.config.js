@@ -8,7 +8,8 @@ function getDBConfig(){
         port:3306, // 端口号 默认的端口号
         // password:'',
         password:'5334719', // 密码 默认的密码为 空 ，可以不写，当前是设置了 密码的
-        database:'system',//连接的 数据库名称 （ 前面创建的数据库名）
+        //database:'system',//连接的 数据库名称 （ 前面创建的数据库名）
+        database:'system_test',//连接的 数据库名称 （ 前面创建的数据库名）
         connectionLimit:1,//创建一个连接池 可以创建多个连接池 （就是多进程  connectionLimit:2,）
         // connectionLimit:4,// 有些情况下 可以创建多个连接池 如完了响应 创建 多进程 多个连接池
     }

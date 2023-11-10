@@ -25,9 +25,9 @@ const roles = {
         ctx.body = {Code: 0,Data:data};
     },
     rolesUpdate:async(ctx, next) => {
-        const {id,rights}=ctx.query;
-        // console.log( id,typeof rights ,ctx.query)
-        const data = await apiModel.rolesUpdate({id,rights});
+        let {id,set}=ctx.request.body;
+        // console.log( id,  set ,ctx.request.body)
+        const data = await apiModel.rolesUpdate({id,set});
         ctx.body = {Code: 0,Data:data};
     },
 }

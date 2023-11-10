@@ -12,14 +12,17 @@
 // 导入连接 mysql数据库  返回的变量 - 操作数据库
 const promisePool = require('../../config/db.config');
 const users = {
-    users: async () => {
+    // 获取用户列表 返回 小于等于当前roleid权限的用户数据, 并且 roleid=1 查询所有区域的用户 否则返回 同级及以下的同区域的用户
+    users: async (roleid,region) => {
         // let data = await promisePool.query(`SELECT u.*,r.* as roles  FROM users as u left join roles as r on u.roleid =r.id;`)
         let data = await promisePool.query(`SELECT u.*, IF( COUNT(r.id) = 0,JSON_ARRAY(), CAST(
         GROUP_CONCAT( JSON_OBJECT('id', r.id,
              'roleName', r.roleName,
              'roleType', r.roleType,
                        'rights', r.rights,
-             'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on u.roleid =r.id  where (u.dele != 1)  GROUP BY u.id;
+             'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on u.roleid =r.id  where (u.dele != 1) and ( u.roleid>=${roleid}) 
+             and ( IF( 1 = ${roleid},
+                u.roleid>=${roleid} , u.region = "${region}"  ) )  GROUP BY u.id;
         `)
         return data[0];
     },
@@ -29,7 +32,8 @@ const users = {
             GROUP_CONCAT( JSON_OBJECT('id', r.id,
                  'roleName', r.roleName,
                  'roleType', r.roleType,
-                           'rights', r.rights,
+                 'rights', r.rights,
+                 'rightsdele', r.rightsdele,
                  'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on u.roleid =r.id where (u.id = ${id}) GROUP BY u.id;
             `);
             return dataItem[0];
