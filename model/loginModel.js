@@ -7,8 +7,17 @@ const promisePool = require('../config/db.config');
 // 当前文件夹 为M层 model 应该创建一个文件夹 model 专门存在处理  增、删、改、查 
 const loginModel = {
     login: async (username, password) => {
+        const data = await promisePool.query(`SELECT u.*, IF( COUNT(r.id) = 0,JSON_ARRAY(), CAST(
+            GROUP_CONCAT( JSON_OBJECT('id', r.id,
+                 'roleName', r.roleName,
+                 'roleType', r.roleType,
+                 'rights', r.rights,
+                 'rightsdele', r.rightsdele,
+                 'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on (u.roleid = r.roleType)   where ( u.username=? ) and ( u.password=? ) GROUP BY u.id;
+            `, [ username , password]);
+            
         // 联表查询    inner join 方式 只能 查询出来 两个表 有关联性的的 数据 如 students 表内的name 和 users 表内的 name相同
-        const data = await promisePool.query(`select u.*,r.roleName from users u left join roles r on (u.roleid = r.roleType)   where ( u.username=? ) and ( u.password=? ) ;`, [ username , password]);
+        // const data = await promisePool.query('select u.*,r.roleName, r.`disable`  from users u left join roles r on (u.roleid = r.roleType)   where ( u.username=? ) and ( u.password=? ) ;', [ username , password]);
         // 语句： select from 表名 别名 inner join（联表查询方式） on（条件）  where 过滤条件
         return data[0];
     },

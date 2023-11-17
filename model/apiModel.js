@@ -11,10 +11,13 @@ const roles =require('./roles/index')
 const users =require('./users/index')
 // 操作数据库 - 区域处理
 const regions =require('./regions/index')
+// 操作数据库 - 新闻 处理
+const news = require('./news/index');
 const apiModel = {
   ...rights,
   ...roles,
   ...users,
   ...regions,
+  ...news,
 }
 module.exports = apiModel;

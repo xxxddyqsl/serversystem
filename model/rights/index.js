@@ -33,14 +33,14 @@ function children_List(data, children) {
     // })
     return data
 }
-function rightsFilter(data, list,roleid) {
-    //roleid 权限不等于1 超级管理员 - 过滤权限列表 返回当前id的具备的个人权限，超级管理员返回所有的菜单栏 - 未勾选的说明没有权限，可自行勾选 增加权限及 pagepermisson 设置为null控制其左侧菜单栏无权限显示
-    // 过滤权限
-    let dataFilter =  roleid!=1? data.filter(item => list.includes(item.key)): data.map(item => !list.includes(item.key)?{...item,pagepermisson:null}:item );
-    // 子
-    dataFilter.forEach(item => (item.children ) && (item.children = rightsFilter(item.children, list,roleid),item.children.length <= 0 &&  (item.children='') ))
-    return dataFilter;
-}
+// function rightsFilter(data, list,roleid) {
+//     //roleid 权限不等于1 超级管理员 - 过滤权限列表 返回当前id的具备的个人权限，超级管理员返回所有的菜单栏 - 未勾选的说明没有权限，可自行勾选 增加权限及 pagepermisson 设置为null控制其左侧菜单栏无权限显示
+//     // 过滤权限
+//     let dataFilter =  roleid!=1? data.filter(item => list.includes(item.key)): data.map(item => !list.includes(item.key)?{...item,pagepermisson:null}:item );
+//     // 子
+//     dataFilter.forEach(item => (item.children ) && (item.children = rightsFilter(item.children, list,roleid),item.children.length <= 0 &&  (item.children='') ))
+//     return dataFilter;
+// }
 const rights = {
     // C 层 调用 M层操作数据库 - 获取权限表
     rights: async (id) => {
@@ -110,28 +110,39 @@ const rights = {
             通过 CAST( value as 类型) 函数 转换 类型， CAST( 内容 as JSON) 将字符串 转为 JSON 类型
         */
         // 个人信息+权限
-        let userinfo = await getUserId(id);
-       
-        //    权限列表 
+        // let userinfo = await getUserId(id);
+
+        // 注意 ：在MySQL中，GROUP_CONCAT函数默认的最大长度限制为1024个字符。当合并后的字符串超过这个长度时，MySQL会自动截断字符串，可能导致数据丢失。这个限制是由group_concat_max_len系统变量控制的。
+        // -- 查看当前group_concat_max_len的值
+        // SHOW VARIABLES LIKE 'group_concat_max_len';
+        // 解决GROUP_CONCAT最大长度限制的问题 我们可以通过修改group_concat_max_len的值来扩大字符串的最大长度。例如，将其修改为10000：
+        // SET SESSION group_concat_max_len = 10000;
+        
+        // group_concat_max_len的值来扩大字符串的最大长度
+        await promisePool.query(`SET SESSION group_concat_max_len = 10000;`)
+        //    权限列表  - 注意 下方 的字符串超过 GROUP_CONCAT 默认的1024 这个长度 引起查询报错
         let rights = await promisePool.query(`select e.*,e.title AS label, IF( COUNT(ea.id) = 0,JSON_ARRAY(), CAST( CONCAT('[',
+        
                     GROUP_CONCAT( JSON_OBJECT('id', ea.id,
                         'label', ea.title,
                         'title', ea.title,
                         'key', ea.key,
                         'rightid', ea.rightid,
                         'grade', ea.grade,
+                        'index', ea.index,
+                        'routepermisson', ea.routepermisson,
                         'pagepermisson', ea.pagepermisson ) ORDER BY  ea.id) ,']'
-                                    ) as JSON) )  as children from rights e  LEFT JOIN rights_children ea ON ea.rightid = e.id   GROUP BY e.id;
+                                    ) as JSON) )  as children from rights e  LEFT JOIN rights_children ea ON ea.rightid = e.id    GROUP BY e.id;
                 ;`)
         // 获取个人信息中的 权限 - 字符串转数组 去除空格  filter 过滤 数组内的空字符串 /\S/
-        let list = (userinfo[0].roles.rights.replace(/\r\n|\n/g, "").split(',')).filter((ktem) => /\S/.test(ktem));
-        console.log('权限列表==>',rights,userinfo[0])
-        let { roleid} = userinfo[0]
-        console.log(typeof roleid)
-        //过滤权限列表 返回当前id的具备的个人权限
-        let data = rightsFilter(rights[0], list,roleid)
-        console.log(data)
-        return data;
+        // let list = (userinfo[0].roles.rights.replace(/\r\n|\n/g, "").split(',')).filter((ktem) => /\S/.test(ktem));
+        // console.log('权限列表==>',rights,userinfo[0])
+        // let { roleid} = userinfo[0]
+        // console.log(typeof roleid)
+        // //过滤权限列表 返回当前id的具备的个人权限
+        // let data = rightsFilter(rights[0], list,roleid)
+        // console.log(data)
+        return rights[0];
     },
     rightsTree: async (id) => {
         // 个人信息+权限
@@ -144,6 +155,8 @@ const rights = {
                         'key', ea.key,
                         'rightid', ea.rightid,
                         'grade', ea.grade,
+                        'index', ea.index,
+                        'routepermisson', ea.routepermisson,
                         'pagepermisson', ea.pagepermisson ) ORDER BY  ea.id) ,']'
                                     ) as JSON) )  as children from rights e  LEFT JOIN rights_children ea ON ea.rightid = e.id   GROUP BY e.id;
                 ;`)

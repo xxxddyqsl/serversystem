@@ -9,11 +9,15 @@ const roles =require('./roles/index');
 const users = require('./users/index');
 // api- 区域 处理
 const regions = require('./regions/index');
+// api- 新闻 处理
+const news = require('./news/index');
+
 // 封装-C层（controller层只负责处理请求业务逻辑 不涉及操作数据库）
 const apiController = {
     ...rights,
     ...roles,
     ...users,
     ...regions,
+    ...news,
 }
 module.exports = apiController;

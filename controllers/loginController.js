@@ -21,8 +21,14 @@ const loginController = {
         if(users[0]){
             // 用户状态 0 说明登录状态为假 禁止登录
             if(users[0].rolestate == 0){
+                ctx.status=403;
                 data={ Code: -1,Message:`暂无权限` };
-            }else{
+            }
+            else if(users[0].roles.disable!=1){
+                ctx.status=403;
+                data={ Code: -1,Message:`暂无该角色` };
+            }
+            else{
                 let obj = users[0];
                // 登录成功 生成token data[0]加密数据   过期时间-字符串类型(默认毫秒 1000*60 = 1分钟 1000*60*60=1小时 ，或'10s'=>10秒 或'1h'=>1小时 或 '1d'=>1天  )
                const token =JWT.generate(obj,(1000*60*5).toString());// 过期时间 5 分钟

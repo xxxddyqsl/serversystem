@@ -33,5 +33,14 @@ router.delete('/users', apiController.usersDelete);
 router.patch('/users', apiController.usersSetData)
 // 区域管理
 router.get('/regions', apiController.regions);
-
+// 新闻管理 - 获取指定 新闻id的新闻
+router.get('/news/:id', apiController.newsId);
+// 新闻管理 - 获取新闻类别
+router.get('/newsCategories', apiController.categories);
+// 新闻管理 -  添加-保存草稿  auditState 0 保存草稿 || auditState 1 提交审核
+router.post('/newsSavedraft', apiController.saveDraft);
+// 新闻管理 -  获取草稿列表
+router.get('/newsDrafts', apiController.drafts);
+// 新闻管理 -  删除
+router.delete('/news', apiController.newsDele);
 module.exports = router
