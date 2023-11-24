@@ -11,7 +11,7 @@ const apiModel = require('../../model/apiModel');
 const regions = {
     regions: async (ctx, next) => {
         const data = await apiModel.regions();
-        console.log(data)
+        // console.log(data)
         ctx.body = {Code: 0,Data:data};
     }
 }

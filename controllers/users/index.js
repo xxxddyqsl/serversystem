@@ -13,16 +13,16 @@
 const apiModel = require('../../model/apiModel');
 const users = {
     users: async (ctx, next) => {
-        console.log('users==>',ctx.query,ctx.params)
+        // console.log('users==>',ctx.query,ctx.params)
         let {roleid,region} =ctx.query;
         // console.log('post请求参数==>',ctx.request.body)
         const data = await apiModel.users(roleid,region);
-        console.log(data)
+        // console.log(data)
         ctx.body = {Code: 0,Data:data};
     },
     usersAdd: async (ctx, next) => {
         // console.log(ctx.query,ctx.params)
-        console.log('post请求参数==>',ctx.request.body)
+        // console.log('post请求参数==>',ctx.request.body)
         const data = await apiModel.usersAdd(ctx.request.body);
         ctx.body = {Code: 0,Data:data};
     },

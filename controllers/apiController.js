@@ -11,7 +11,10 @@ const users = require('./users/index');
 const regions = require('./regions/index');
 // api- 新闻 处理
 const news = require('./news/index');
-
+// api- 审核 处理
+const audit = require('./audit/index');
+// 操作数据库 - 发布 处理
+const publish = require('./publish/index');
 // 封装-C层（controller层只负责处理请求业务逻辑 不涉及操作数据库）
 const apiController = {
     ...rights,
@@ -19,5 +22,7 @@ const apiController = {
     ...users,
     ...regions,
     ...news,
+    ...audit,
+    ...publish,
 }
 module.exports = apiController;

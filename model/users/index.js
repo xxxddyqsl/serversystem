@@ -20,10 +20,14 @@ const users = {
              'roleName', r.roleName,
              'roleType', r.roleType,
                        'rights', r.rights,
-             'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on u.roleid =r.id  where (u.dele != 1) and ( u.roleid>=${roleid}) 
+             'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on u.roleid =r.id  where (u.dele != 1) and ( u.roleid>=${roleid})
              and ( IF( 1 = ${roleid},
                 u.roleid>=${roleid} , u.region = "${region}"  ) )  GROUP BY u.id;
         `)
+        // mysql IF 语句 解释说明
+        // IF( 1 = ${roleid} 为true 时 执行语句1 否则 执行语句2,
+            // u.roleid>=${roleid} 语句1 , u.region = "${region}" 语句2
+
         return data[0];
     },
     // 获取指定 id 的 用户信息
@@ -61,14 +65,14 @@ const users = {
         return data[0];
     },
     usersSetData: async (id,set) => {
-        console.log(id,set)
+        // console.log(id,set)
         // 获取修改字段的key
         let nameArr = Object.keys(set);
         // 第一种是正则表达式来判断，判断输入的字符中是否包含中文。
         let reg = new RegExp("[\\u4E00-\\u9FFF]+",'g');
         // 拼接 字段 +修改的value 返回数组 join 转字符串,分割 字段包含中文 添加引号 如字符串 为空 赋值 空的""
         let msg=nameArr.map((item)=>`${item}=${reg.test(set[item])?'"'+set[item]+'"':(typeof set[item] == 'string'&&set[item]== '')? '""':set[item]}`).join(',');
-        console.log(msg)
+        // console.log(msg)
         //   修改字段状态
         let data = await promisePool.query(`update users set ${msg} where id=${id};`)
         // /联表查询 获取 角色的权限 并且 根据 insertId 获取 插入成功的 数据

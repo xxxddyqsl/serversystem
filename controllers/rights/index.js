@@ -30,7 +30,7 @@ function rightsFilter(data, list,roleid) {
 const apiModel = require('../../model/apiModel');
 const rights = {
     rights: async (ctx, next) => {
-        console.log('获取请求参数get=>',ctx.query,ctx.querystring)
+        // console.log('获取请求参数get=>',ctx.query,ctx.querystring)
         let {id}=ctx.query; 
         // M层 model 操作数据库 并且返回数据
          // 个人信息
@@ -45,18 +45,17 @@ const rights = {
          const rights = await apiModel.rights(id);
         // 获取个人信息中的 权限 - 字符串转数组 去除空格  filter 过滤 数组内的空字符串 /\S/
         let list = (userinfo[0].roles.rights.replace(/\r\n|\n/g, "").split(',')).filter((ktem) => /\S/.test(ktem));
-        console.log('权限列表==>',rights,userinfo[0])
+        // console.log('权限列表==>',rights,userinfo[0])
         
-        console.log(typeof roleid)
+        // console.log(typeof roleid)
         //过滤权限列表 返回当前id的具备的个人权限
         const data = rightsFilter(rights, list,roleid)
-        console.log(data)
        
         // console.log(data)
         ctx.body = {Code:0,Data:data};
     },
     rightsTree: async (ctx, next) => {
-        console.log('获取请求参数get=>',ctx.query,ctx.querystring)
+        // console.log('获取请求参数get=>',ctx.query,ctx.querystring)
         let {id}=ctx.query; 
         // M层 model 操作数据库 并且返回数据
         const data = await apiModel.rightsTree(id);
@@ -64,7 +63,7 @@ const rights = {
         ctx.body = {Code: 0,Data:data};
     },
     rightsDelete:async(ctx, next) => {
-        console.log('获取url中的请求参数 delete=>',ctx.params);
+        // console.log('获取url中的请求参数 delete=>',ctx.params);
         // grade 权限层级 
         const {grade,id} = ctx.params;
         
@@ -73,14 +72,14 @@ const rights = {
         ctx.body = {Code: 0,Data:data[0]&&'ok'};
     },
     rightsUpdate:async(ctx, next) => {
-        console.log('获取url中的请求参数 update=>',ctx.params);
+        // console.log('获取url中的请求参数 update=>',ctx.params);
         // grade 权限层级 
         const {grade,id} = ctx.params;
         
         const { pagepermisson } = ctx.query;
         // M层 model 操作数据库 并且返回数据
         const data = await apiModel.rightsUpdate({grade,id,pagepermisson});
-        console.log(grade,id, pagepermisson );
+        // console.log(grade,id, pagepermisson );
         ctx.body = {Code: 0,Data:data[0]&&'ok'};
     }
 }

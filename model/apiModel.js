@@ -13,11 +13,17 @@ const users =require('./users/index')
 const regions =require('./regions/index')
 // 操作数据库 - 新闻 处理
 const news = require('./news/index');
+// 操作数据库 - 审核 处理
+const audit = require('./audit/index');
+// 操作数据库 - 发布 处理
+const publish = require('./publish/index');
 const apiModel = {
   ...rights,
   ...roles,
   ...users,
   ...regions,
   ...news,
+  ...audit,
+  ...publish,
 }
 module.exports = apiModel;

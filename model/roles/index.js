@@ -22,7 +22,7 @@ const roles= {
          let reg = new RegExp("[\\u4E00-\\u9FFF]+",'g');
          // 拼接 字段 +修改的value 返回数组 join 转字符串,分割 字段包含中文 添加引号 如字符串 为空 赋值 空的""
          let msg=nameArr.map((item)=>`${item}=${reg.test(set[item])?'"'+set[item]+'"':(typeof set[item] == 'string'&&set[item]== '')? '""':'"'+set[item]+'"'}`).join(',');
-         console.log('rolesUpdate=>',msg,set)
+        //  console.log('rolesUpdate=>',msg,set)
         // 角色权限 - 修改  rights 字段    - '${rights}' 注意 引号
         let data = await promisePool.query(`update roles set ${msg} where id = ${id} ;`)
         return data[0];

@@ -162,11 +162,11 @@ const rights = {
                 ;`)
         // 获取个人信息中的 权限 - 字符串转数组 去除空格  filter 过滤 数组内的空字符串 /\S/
         let list = (userinfo[0].roles.rights.replace(/\r\n|\n/g, "").split(',')).filter((ktem) => /\S/.test(ktem));
-        console.log('权限列表==>', userinfo[0].roleid,rights)
+        // console.log('权限列表==>', userinfo[0].roleid,rights)
        
         //roleid 权限不等于1 超级管理员 - 过滤权限列表 返回当前id的具备的个人权限，超级管理员返回所有的菜单栏 - 未勾选的说明没有权限，可自行勾选 增加权限及其左侧菜单栏回显
         let data = userinfo[0].roleid!=1? rightsFilter(rights[0], list):rights[0];
-        console.log(data)
+        // console.log(data)
         return data;
     },
     /*
@@ -191,10 +191,10 @@ const rights = {
         //  grade 表所在的 层级 1级为1 ， 2级为2 一级 pagepermisson 字段 1 说明 有权限展示 0 无权限 null 说明不是页面
         if (grade === '1') {
             data = await promisePool.query(`update rights set pagepermisson=0 where id=${id};`)
-            console.log(data)
+            // console.log(data)
         } else if (grade === '2') {
             data = await promisePool.query(`update rights_children set pagepermisson=0 where id=${id};`)
-            console.log(data)
+            // console.log(data)
         }
         return data;
     },
@@ -205,10 +205,10 @@ const rights = {
         // 一级 主表
         if (grade === '1') {
             data = await promisePool.query(`update rights set pagepermisson=${pagepermisson} where id=${id};`)
-            console.log(data)
+            // console.log(data)
         } else if (grade === '2') {// 子级
             data = await promisePool.query(`update rights_children set pagepermisson=${pagepermisson} where id=${id};`)
-            console.log(data)
+            // console.log(data)
         }
         return data;
     }

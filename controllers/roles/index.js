@@ -20,7 +20,7 @@ const roles = {
         ctx.body = {Code: 0,Data:data};
     },
     rolesDelete: async (ctx, next) => {
-        console.log( ctx.query,)
+        // console.log( ctx.query,)
         const {id}=ctx.query;
         const data = await apiModel.rolesDelete({id});
         ctx.body = {Code: 0,Data:data};
