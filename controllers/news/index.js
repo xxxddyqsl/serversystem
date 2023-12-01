@@ -105,6 +105,16 @@ const news = {
         // console.log(id,set)
         const data = await apiModel.newsSetData({id,set});
         ctx.body = {Code: 0,Data:data};
-    }
+    },
+    // 获取所有新闻列表  根据发布状态
+    newsList: async (ctx, next) => {
+        // 如 http://localhost:3000/api/api/news/15
+        let {publishState,}= ctx.query ;
+        // console.log('获取url 后面的参数',ctx.query )
+
+        const data = await apiModel.newsList(publishState,);
+        // console.log(data)
+        ctx.body = {Code: 0,Data:data[0]};
+    },
 }
 module.exports = news

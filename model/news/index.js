@@ -69,8 +69,8 @@ const news = {
           left JOIN categories c on c.id=n.categoryId
 
 
-          where  (n.publishState=${publishState}) and (newsDele != 1 )  GROUP BY n.id ORDER BY ${sortkey?sortkey:'view'} desc LIMIT ${LIMIT?LIMIT:10}; `);
-        //ORDER BY view desc 按浏览量降序   LIMIT   要多少条 数据 不传 默认10条
+          where  (n.publishState=${publishState}) and (newsDele != 1 )  GROUP BY n.id ORDER BY ${sortkey?sortkey:'view'} desc  ${LIMIT?'LIMIT '+LIMIT:''}; `);
+        //ORDER BY view desc 按浏览量降序   LIMIT   要多少条 数据 
       return data;
     },
     // 获取新闻类别
@@ -184,7 +184,26 @@ const news = {
         // from categories  as c 
         // left JOIN news n on c.id = n.categoryId    GROUP BY   c.id ;`)
         return data;
-    }
+    },
+     // 获取 所有发布的 新闻 列表
+     newsList: async (publishState) => {
+        // sortkey 中目前 包含了  star 或 view 按哪个进行排序 不传 默认按view排序
+       
+          //  join 联接 多表查询 roles表 categories表
+          const data = await promisePool.query(`select n.*, 
+          IF( COUNT(c.id) = 0,JSON_ARRAY(), CAST(
+          GROUP_CONCAT( JSON_OBJECT('id', c.id,
+          'title', c.title,
+          'value', c.value ) ORDER BY  c.id)  as JSON) )  as category
+
+          from news as n
+          left JOIN categories c on c.id=n.categoryId
+
+
+          where  (n.publishState=${publishState}) and (newsDele != 1 )  GROUP BY n.id  ; `);
+        //ORDER BY view desc 按浏览量降序   LIMIT   要多少条 数据 
+      return data;
+    },
 
 }
 module.exports = news

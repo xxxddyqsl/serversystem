@@ -11,6 +11,8 @@
 
 // 导入连接 mysql数据库  返回的变量 - 操作数据库
 const promisePool = require('../../config/db.config');
+
+
 const users = {
     // 获取用户列表 返回 小于等于当前roleid权限的用户数据, 并且 roleid=1 查询所有区域的用户 否则返回 同级及以下的同区域的用户
     users: async (roleid,region) => {
@@ -40,6 +42,7 @@ const users = {
                  'rightsdele', r.rightsdele,
                  'disable', r.disable ) ORDER BY  r.id) as json ) )  as roles FROM users  u LEFT JOIN roles  r on u.roleid =r.id where (u.id = ${id}) GROUP BY u.id;
             `);
+            
             return dataItem[0];
     },
     usersAdd: async (body) => {
@@ -52,8 +55,16 @@ const users = {
         //    insertId 为 返回的插入数据成功的 自增 id 
         let {insertId}=data[0];
         // 联表查询 获取 角色的权限 并且 根据 insertId 获取 插入成功的 数据
-        let dataItem = await users.getUserId(insertId)
-        return dataItem[0];
+        let dataItem = await users.getUserId(insertId);
+        let obj = dataItem[0];
+              // 过滤个人信息中的 password密码
+              const newCar =Object.keys(obj).reduce((object, key) => {
+                if (key !== 'password') {
+                  object[key] = obj[key]
+                }
+                return object
+              }, {})
+        return newCar;
     },
     usersDelete: async (id) => {
         // 假删除 - 修改字段状态
@@ -71,13 +82,21 @@ const users = {
         // 第一种是正则表达式来判断，判断输入的字符中是否包含中文。
         let reg = new RegExp("[\\u4E00-\\u9FFF]+",'g');
         // 拼接 字段 +修改的value 返回数组 join 转字符串,分割 字段包含中文 添加引号 如字符串 为空 赋值 空的""
-        let msg=nameArr.map((item)=>`${item}=${reg.test(set[item])?'"'+set[item]+'"':(typeof set[item] == 'string'&&set[item]== '')? '""':set[item]}`).join(',');
-        // console.log(msg)
+        let msg=nameArr.map((item)=>`${item}=${reg.test(set[item])||typeof set[item] == 'string'?'"'+set[item]+'"':(typeof set[item] == 'string'&&set[item]== '')? '""':set[item]}`).join(',');
+        console.log(msg)
         //   修改字段状态
         let data = await promisePool.query(`update users set ${msg} where id=${id};`)
         // /联表查询 获取 角色的权限 并且 根据 insertId 获取 插入成功的 数据
         let dataItem = await users.getUserId(id);
-        return dataItem[0];
+        let obj = dataItem[0];
+        // 过滤个人信息中的 password密码
+        const newCar =Object.keys(obj).reduce((object, key) => {
+          if (key !== 'password') {
+            object[key] = obj[key]
+          }
+          return object
+        }, {})
+        return newCar;
     },
 }
 module.exports = users

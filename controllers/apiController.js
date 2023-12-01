@@ -15,6 +15,10 @@ const news = require('./news/index');
 const audit = require('./audit/index');
 // 操作数据库 - 发布 处理
 const publish = require('./publish/index');
+
+// api- 上传文件
+const uploads = require('./upload/');
+
 // 封装-C层（controller层只负责处理请求业务逻辑 不涉及操作数据库）
 const apiController = {
     ...rights,
@@ -24,5 +28,6 @@ const apiController = {
     ...news,
     ...audit,
     ...publish,
+    ...uploads,
 }
 module.exports = apiController;
